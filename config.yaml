@@ -1,0 +1,108 @@
+# The Canvas Configuration
+# Edit paths to match your machine (H: drive on Windows, external on Mac)
+
+# ─── Model Storage ───
+# Where downloaded model weights live (H: drive on Windows — 1.8TB free)
+model_dir: "H:/models"
+
+# Where generated outputs go
+output_dir: "H:/canvas-outputs"
+# Temp working directory
+temp_dir: "H:/canvas-temp"
+
+# ─── Hardware ───
+hardware:
+  gpu: "AMD Radeon RX 6800"
+  gpu_vram_gb: 16
+  system_ram_gb: 128
+  use_directml: true       # AMD GPU — use DirectML, not CUDA
+  cpu_offload: true        # Offload large models to 128GB system RAM
+
+# ─── Models ───
+models:
+  # Image generation (Apache 2.0)
+  image:
+    name: "FLUX.2 Klein"
+    repo_id: "black-forest-labs/FLUX.2-Klein-4B"
+    backend: "local"
+    device: "directml"
+    vram_limit_gb: 16
+
+  # Video generation (Apache 2.0)
+  video:
+    primary:
+      name: "Wan 2.2 T2V A14B"
+      repo_id: "Wan-AI/Wan2.2-T2V-A14B"
+      backend: "local"
+      device: "directml"
+      offload_model: true
+      vram_limit_gb: 16
+      fallback_to_api: true
+
+    fast:
+      name: "LTX-2.3"
+      repo_id: "Lightricks/LTX-2.3"
+      backend: "local"
+      device: "directml"
+      offload_model: false
+      vram_limit_gb: 16
+
+    # Additional models (download optionally)
+    hunyuan:
+      name: "HunyuanVideo 1.5"
+      repo_id: "tencent/HunyuanVideo-1.5"
+      backend: "local"
+      device: "directml"
+      offload_model: false
+      vram_limit_gb: 14
+
+  # Text-to-Speech (Apache 2.0)
+  tts:
+    name: "Kokoro"
+    repo_id: "hexgrad/Kokoro-82M"
+    backend: "local"
+    device: "directml"
+
+  # Lip sync (Apache 2.0)
+  lip_sync:
+    name: "SadTalker"
+    repo_id: "OpenTalker/SadTalker"
+    backend: "local"
+    device: "directml"
+
+# ─── API Fallback ───
+# Enable these to use cloud APIs when local models OOM or are too slow
+api:
+  enabled: false          # Set true to enable API fallback
+  fal_ai:
+    api_key: ""           # https://fal.ai — for Wan 2.2, FLUX, Kling, Veo
+  replicate:
+    api_key: ""           # https://replicate.com — for HunyuanVideo
+
+  # Cloud GPU (Tier 3 — for serving multiple users)
+  cloud_gpu:
+    enabled: false        # Set true to route to cloud GPUs
+    provider: "runpod"   # "runpod" | "vast"
+    api_key: ""           # RunPod API key
+    endpoint_id: ""       # RunPod serverless endpoint ID
+
+# ─── Credit Tracking ───
+credits:
+  log_file: "H:/canvas-outputs/credits.json"
+  costs:
+    local_image: 0.0
+    local_video: 0.0
+    local_tts: 0.0
+    local_lip_sync: 0.0
+    api_fal_image: 0.01
+    api_fal_video: 0.50
+    api_replicate_video: 0.20
+    cloud_gpu_video: 0.30
+
+# ─── Compositing ───
+compositor:
+  ffmpeg_path: "ffmpeg"
+  default_format: "mp4"
+  default_codec: "h264"
+  default_resolution: "1920x1080"
+  default_fps: 30

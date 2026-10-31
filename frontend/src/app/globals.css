@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: #080612;
+    --bg2: #0e0a1e;
+    --card: #140e26;
+    --border: #1f1538;
+    --accent: #9146ff;
+    --accent2: #38b6ff;
+    --success: #28e5a0;
+    --danger: #ff4466;
+    --muted: #7a6b9a;
+  }
+}
+
+@layer utilities {
+  .bg-bg { background-color: #080612; }
+  .bg-bg2 { background-color: #0e0a1e; }
+  .bg-card { background-color: #140e26; }
+  .bg-border { background-color: #1f1538; }
+  .text-accent { color: #9146ff; }
+  .text-accent2 { color: #38b6ff; }
+  .text-success { color: #28e5a0; }
+  .text-danger { color: #ff4466; }
+  .text-muted { color: #7a6b9a; }
+  .border-border { border-color: #1f1538; }
+
+  .glass {
+    background: rgba(20, 14, 38, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(31, 21, 56, 0.8);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(145, 70, 255, 0.15);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #9146ff, #38b6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-btn {
+    background: linear-gradient(135deg, #9146ff, #38b6ff);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #0e0a1e;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #1f1538;
+    border-radius: 3px;
+  }
+}

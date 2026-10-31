@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8787:8787"
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - H:/models:/models
+      - H:/canvas-outputs:/outputs
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8787
+      - NEXT_PUBLIC_WS_URL=localhost:8787
+    depends_on:
+      - backend
+    restart: unless-stopped

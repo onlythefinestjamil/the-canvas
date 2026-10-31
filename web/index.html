@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Canvas — AI Creative Studio</title>
+<style>
+:root {
+  --bg: #080612;
+  --bg2: #0e0a1e;
+  --card: #140e26;
+  --border: #1f1538;
+  --accent: #9146FF;
+  --accent2: #38B6FF;
+  --success: #28E5A0;
+  --text: #e0d8f0;
+  --muted: #7a6b9a;
+  --danger: #ff4466;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+/* ─── Header ─── */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.logo {
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.logo-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.credits-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.credits-badge .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+}
+
+/* ─── Main Layout ─── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+}
+@media (max-width: 768px) {
+  .main-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Card ─── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+/* ─── Form ─── */
+textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 120px;
+  transition: border 0.2s;
+}
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(145, 70, 255, 0.15);
+}
+.form-group { margin-bottom: 16px; }
+label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+select, input[type="text"] {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-size: 14px;
+}
+select:focus, input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ─── Toggle ─── */
+.toggle-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.toggle {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.toggle.active {
+  border-color: var(--accent);
+  background: rgba(145, 70, 255, 0.15);
+  color: var(--text);
+}
+
+/* ─── Generate Button ─── */
+.generate-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+  margin-top: 8px;
+}
+.generate-btn:hover { opacity: 0.9; }
+.generate-btn:active { transform: scale(0.98); }
+.generate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Progress ─── */
+.progress-area {
+  margin-top: 20px;
+  min-height: 300px;
+}
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.3s;
+  width: 0%;
+}
+.status-msg {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg);
+  border-radius: 10px;
+  font-size: 13px;
+}
+.status-item .icon {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+.status-item.pending .icon { background: var(--border); color: var(--muted); }
+.status-item.active .icon { background: var(--accent); color: white; animation: pulse 1s infinite; }
+.status-item.done .icon { background: var(--success); color: var(--bg); }
+.status-item.error .icon { background: var(--danger); color: white; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ─── Output ─── */
+.output-area {
+  margin-top: 20px;
+}
+.output-video {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  margin-top: 12px;
+}
+.no-output {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+  font-size: 15px;
+}
+.placeholder-icon {
+  font-size: 48px;
+  opacity: 0.2;
+  margin-bottom: 12px;
+}
+
+/* ─── Presets ─── */
+.preset-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Header -->
+<header>
+  <div>
+    <div class="logo">The Canvas</div>
+    <div class="logo-sub">AI Creative Studio — Self-Hosted</div>
+  </div>
+  <div class="credits-badge">
+    <div class="dot"></div>
+    <span id="credits-display">Local models · $0/gen</span>
+  </div>
+</header>
+
+<!-- Main Grid -->
+<div class="main-grid">
+
+  <!-- Left: Input Panel -->
+  <div class="card">
+    <div class="card-title">Create</div>
+
+    <!-- Presets -->
+    <div class="preset-chips">
+      <div class="chip" onclick="setPreset('30-second ad for a streetwear clothing brand')">Ad</div>
+      <div class="chip" onclick="setPreset('60-second music video for a hip hop track')">Music Video</div>
+      <div class="chip" onclick="setPreset('2-minute anime episode about a young warrior')">Anime</div>
+      <div class="chip" onclick="setPreset('30-second video game trailer cinematic')">Game Trailer</div>
+      <div class="chip" onclick="setPreset('45-second animated short film about a robot')">Animation</div>
+      <div class="chip" onclick="setPreset('15-second vertical TikTok product showcase')">TikTok</div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label>Describe what you want to create</label>
+      <textarea id="description" placeholder="e.g. 30-second ad for a streetwear clothing brand. Show a model wearing the latest drop. Cinematic lighting, urban backdrop."></textarea>
+    </div>
+
+    <!-- Quality -->
+    <div class="form-group">
+      <label>Quality</label>
+      <div class="toggle-row">
+        <div class="toggle active" onclick="setQuality(this, 'high')">High (Wan 2.2)</div>
+        <div class="toggle" onclick="setQuality(this, 'fast')">Fast (LTX-2.3)</div>
+      </div>
+    </div>
+
+    <!-- Voiceover -->
+    <div class="form-group">
+      <label>Voiceover</label>
+      <div class="toggle-row">
+        <div class="toggle active" onclick="setVoiceover(this, true)">On</div>
+        <div class="toggle" onclick="setVoiceover(this, false)">Off</div>
+      </div>
+    </div>
+
+    <!-- Captions -->
+    <div class="form-group">
+      <label>Captions</label>
+      <div class="toggle-row">
+        <div class="toggle active" onclick="setCaptions(this, null)">None</div>
+        <div class="toggle" onclick="setCaptions(this, 'bold')">Bold</div>
+        <div class="toggle" onclick="setCaptions(this, 'hud')">HUD</div>
+        <div class="toggle" onclick="setCaptions(this, 'clean')">Clean</div>
+      </div>
+    </div>
+
+    <button class="generate-btn" id="generate-btn" onclick="generate()">
+      Generate
+    </button>
+  </div>
+
+  <!-- Right: Output Panel -->
+  <div class="card">
+    <div class="card-title">Output</div>
+    <div class="progress-area" id="progress-area">
+      <div class="no-output">
+        <div class="placeholder-icon">🎨</div>
+        <div>Your generated content will appear here</div>
+        <div style="font-size: 13px; margin-top: 8px; opacity: 0.6;">Describe what you want and hit Generate</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Credits Detail -->
+<div class="card" style="margin-top: 24px;">
+  <div class="card-title">Generation History</div>
+  <div id="history" style="font-size: 13px; color: var(--muted);">No generations yet</div>
+</div>
+
+</div>
+
+<script>
+let ws = null;
+let currentQuality = 'high';
+let currentVoiceover = true;
+let currentCaptions = null;
+
+function setPreset(text) {
+  document.getElementById('description').value = text;
+}
+function setQuality(el, val) {
+  document.querySelectorAll('.toggle').forEach(t => {
+    if (t.onclick && t.onclick.toString().includes('setQuality')) t.classList.remove('active');
+  });
+  el.classList.add('active');
+  currentQuality = val;
+}
+function setVoiceover(el, val) {
+  document.querySelectorAll('.toggle').forEach(t => {
+    if (t.onclick && t.onclick.toString().includes('setVoiceover')) t.classList.remove('active');
+  });
+  el.classList.add('active');
+  currentVoiceover = val;
+}
+function setCaptions(el, val) {
+  document.querySelectorAll('.toggle').forEach(t => {
+    if (t.onclick && t.onclick.toString().includes('setCaptions')) t.classList.remove('active');
+  });
+  el.classList.add('active');
+  currentCaptions = val;
+}
+
+function generate() {
+  const desc = document.getElementById('description').value.trim();
+  if (!desc) {
+    alert('Describe what you want to create first!');
+    return;
+  }
+
+  const btn = document.getElementById('generate-btn');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+
+  // Connect WebSocket
+  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  ws = new WebSocket(`${protocol}://${window.location.host}/ws`);
+
+  ws.onopen = () => {
+    ws.send(JSON.stringify({
+      type: 'generate',
+      description: desc,
+      quality: currentQuality,
+      voice: 'af_heart',
+      voiceover: currentVoiceover,
+      captions: currentCaptions,
+    }));
+  };
+
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+
+    if (msg.type === 'progress') {
+      updateProgress(msg);
+    } else if (msg.type === 'done') {
+      showOutput(msg);
+      btn.disabled = false;
+      btn.textContent = 'Generate';
+      loadHistory();
+    } else if (msg.type === 'error') {
+      showError(msg.message);
+      btn.disabled = false;
+      btn.textContent = 'Generate';
+    }
+  };
+
+  ws.onerror = () => {
+    showError('Connection lost');
+    btn.disabled = false;
+    btn.textContent = 'Generate';
+  };
+}
+
+function updateProgress(msg) {
+  const area = document.getElementById('progress-area');
+  const pct = msg.shots ? Math.round((msg.shots / 10) * 100) : 10;
+
+  area.innerHTML = `
+    <div style="padding: 20px;">
+      <div style="font-size: 16px; font-weight: 600;">${msg.message || 'Working...'}</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%"></div></div>
+      <div class="status-msg">Status: ${msg.status}</div>
+      ${msg.shots ? `<div class="status-msg">${msg.shots} shots · ${msg.duration}s · ${msg.aspect} · ${msg.content_type}</div>` : ''}
+    </div>
+  `;
+}
+
+function showOutput(msg) {
+  const area = document.getElementById('progress-area');
+  const path = msg.output_path || '';
+  const filename = path.split(/[/\\]/).pop() || 'output.mp4';
+
+  area.innerHTML = `
+    <div style="padding: 20px;">
+      <div style="color: var(--success); font-weight: 700; margin-bottom: 12px;">✓ Complete!</div>
+      <video class="output-video" controls autoplay>
+        <source src="/api/output/${filename}" type="video/mp4">
+        Your browser does not support video playback.
+      </video>
+      <div style="margin-top: 12px; font-size: 13px; color: var(--muted);">
+        Saved: ${path}
+      </div>
+    </div>
+  `;
+}
+
+function showError(msg) {
+  const area = document.getElementById('progress-area');
+  area.innerHTML = `
+    <div style="padding: 40px; text-align: center;">
+      <div style="color: var(--danger); font-size: 16px; margin-bottom: 8px;">Generation Failed</div>
+      <div style="color: var(--muted); font-size: 14px;">${msg}</div>
+    </div>
+  `;
+}
+
+async function loadHistory() {
+  try {
+    const res = await fetch('/api/credits');
+    const data = await res.json();
+    if (data.entries && data.entries.length > 0) {
+      const html = data.entries.map(e => `
+        <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+          <span style="color: var(--accent2);">${e.capability}</span> ·
+          ${e.model} ·
+          <span style="color: ${e.backend === 'local' ? 'var(--success)' : 'var(--danger)'};">${e.backend}</span> ·
+          $${e.cost_usd.toFixed(2)} ·
+          ${e.duration_seconds.toFixed(1)}s
+        </div>
+      `).join('');
+      document.getElementById('history').innerHTML = html;
+    }
+  } catch (e) {
+    // Ignore — server might not be running
+  }
+}
+
+// Load history on page load
+window.addEventListener('DOMContentLoaded', loadHistory);
+</script>
+</body>
+</html>
