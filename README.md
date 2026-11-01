@@ -1,6 +1,8 @@
 # The Canvas
 
-AI creative generation pipeline — a self-hosted alternative to ElevenLabs Creative Studio.
+**Powered by Momentum Labs**
+
+AI creative generation pipeline — a self-hosted alternative to ElevenLabs Creative Studio. Part of the Momentum Labs creation suite (The Engine Room · The Canvas · the apps).
 
 ## What it does
 
