@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Download, Film, ImageIcon, Loader2, AlertTriangle } from 'lucide-react';
+import { Download, Film, ImageIcon, Loader2, AlertTriangle, Pencil } from 'lucide-react';
 import type { GenItem } from '../types';
 import ImageEditor from './ImageEditor';
 
 interface Props {
   items: GenItem[];
+  onEdit?: (item: GenItem) => void;
 }
 
-export default function Gallery({ items }: Props) {
+export default function Gallery({ items, onEdit }: Props) {
   const [active, setActive] = useState<GenItem | null>(null);
 
   if (items.length === 0) {
@@ -88,6 +89,20 @@ export default function Gallery({ items }: Props) {
               <p style={{ fontSize: '0.62rem', color: 'var(--text-dim)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {item.prompt}
               </p>
+              {onEdit && item.category === 'image' && item.status === 'done' && item.resultUrl && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onEdit(item); }}
+                  style={{
+                    position: 'absolute', bottom: '0.4rem', right: '0.4rem',
+                    display: 'flex', alignItems: 'center', gap: '0.3rem',
+                    padding: '0.3rem 0.5rem', border: '1px solid var(--border-bright)',
+                    borderRadius: 6, background: 'var(--surface-2)', color: 'var(--text)',
+                    cursor: 'pointer', fontSize: '0.62rem', fontWeight: 600,
+                  }}
+                >
+                  <Pencil size={11} /> Edit
+                </button>
+              )}
             </div>
           </motion.div>
         ))}
