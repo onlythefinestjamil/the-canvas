@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 let mainWindow = null;
 
@@ -11,7 +12,7 @@ function createWindow() {
     minHeight: 600,
     frame: true,
     titleBarStyle: 'hiddenInset',
-    backgroundColor: '#050509',
+    backgroundColor: '#0a0a0a',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -37,11 +38,22 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-// IPC for saving files
+// IPC for saving files (legacy string path)
 ipcMain.handle('save-file', async (event, { defaultName, data, extension }) => {
   const result = await dialog.showSaveDialog(mainWindow, {
     defaultPath: defaultName,
     filters: [{ name: extension.toUpperCase(), extensions: [extension] }],
   });
   return result;
+});
+
+// IPC for saving a binary buffer to disk
+ipcMain.handle('save-buffer', async (event, { defaultName, buffer, extension }) => {
+  const result = await dialog.showSaveDialog(mainWindow, {
+    defaultPath: defaultName,
+    filters: [{ name: extension.toUpperCase(), extensions: [extension] }],
+  });
+  if (result.canceled || !result.filePath) return { canceled: true };
+  await fs.promises.writeFile(result.filePath, Buffer.from(buffer));
+  return { canceled: false, filePath: result.filePath };
 });

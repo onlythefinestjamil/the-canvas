@@ -22,11 +22,11 @@
     "directories": { "output": "release" },
     "win": {
       "target": ["nsis"],
-      "icon": "assets/icon.png"
+      "icon": "assets/icon.ico"
     },
     "mac": {
       "target": ["dmg"],
-      "icon": "assets/icon.png",
+      "icon": "assets/icon-512.png",
       "category": "public.app-category.creativity"
     },
     "nsis": {
