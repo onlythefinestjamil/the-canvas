@@ -1,12 +1,17 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Film, ImageIcon, Layers, LogOut, User as UserIcon, Pencil } from 'lucide-react';
+import { Sparkles, Film, ImageIcon, Layers, LogOut, User as UserIcon, Pencil, Clapperboard } from 'lucide-react';
 import PromptInput from './components/PromptInput';
 import Gallery from './components/Gallery';
 import SettingsPanel from './components/Settings';
 import Auth from './components/Auth';
 import PromptHistory from './components/PromptHistory';
 import PhotoEditor from './components/PhotoEditor';
+import VideoEditor from './components/video-editor/VideoEditor';
+import type { VideoProject } from './lib/video/types';
+import { createProject } from './lib/video/project';
+import { makeClip } from './lib/video/clip';
+import { addClip } from './lib/video/timeline';
 import { MODELS } from './lib/models';
 import { runBatch } from './lib/batch';
 import { loadGallery, saveGallery, loadSettings, saveSettings } from './lib/storage';
@@ -26,6 +31,8 @@ export default function App() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [editorImage, setEditorImage] = useState<string | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
+  const [videoProject, setVideoProject] = useState<VideoProject | null>(null);
+  const [videoEditorOpen, setVideoEditorOpen] = useState(false);
 
   useEffect(() => {
     setItems(loadGallery());
@@ -193,6 +200,14 @@ export default function App() {
             <Pencil size={14} /> New Canvas
           </button>
 
+          <button
+            onClick={() => { setVideoProject(null); setVideoEditorOpen(true); }}
+            className="btn"
+            title="Open the video editor on a new project"
+          >
+            <Clapperboard size={14} /> New Video
+          </button>
+
           <SettingsPanel settings={settings} onSave={handleSaveSettings} plan={user?.plan || 'free'} onSelectPlan={handleSelectPlan} />
         </div>
       </header>
@@ -252,7 +267,22 @@ export default function App() {
             <h2 style={{ fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)' }}>Gallery</h2>
             <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>· {items.length} items</span>
           </div>
-          <Gallery items={items} onEdit={(item) => { setEditorImage(item.resultUrl ?? null); setEditorOpen(true); }} />
+          <Gallery
+            items={items}
+            onEdit={(item) => { setEditorImage(item.resultUrl ?? null); setEditorOpen(true); }}
+            onEditVideo={(item) => {
+              if (!item.resultUrl) return;
+              const proj = createProject(`Edit — ${item.prompt.slice(0, 28)}`);
+              const vTrack = proj.tracks.find((t) => t.kind === 'video')!;
+              const clip = makeClip(vTrack.id, { type: 'gallery', url: item.resultUrl, mediaType: 'video' }, 0, 5, {
+                sourceDuration: 5,
+                outPoint: 5,
+                label: item.prompt.slice(0, 24),
+              });
+              setVideoProject(addClip(proj, clip));
+              setVideoEditorOpen(true);
+            }}
+          />
         </main>
       </div>
 
@@ -271,6 +301,13 @@ export default function App() {
         <PhotoEditor
           initialImage={editorImage}
           onClose={() => { setEditorOpen(false); setEditorImage(null); }}
+        />
+      )}
+      {videoEditorOpen && (
+        <VideoEditor
+          galleryItems={items}
+          initialProject={videoProject ?? undefined}
+          onClose={() => { setVideoEditorOpen(false); setVideoProject(null); }}
         />
       )}
     </div>
