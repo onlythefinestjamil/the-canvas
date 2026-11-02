@@ -18,14 +18,23 @@
   "build": {
     "appId": "com.momentumlabs.canvas",
     "productName": "The Canvas",
-    "files": ["dist/**/*", "electron/**/*"],
-    "directories": { "output": "release" },
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "directories": {
+      "output": "release"
+    },
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "icon": "assets/icon.ico"
     },
     "mac": {
-      "target": ["dmg"],
+      "target": [
+        "dmg"
+      ],
       "icon": "assets/icon-512.png",
       "category": "public.app-category.creativity"
     },
@@ -35,10 +44,11 @@
     }
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "@fal-ai/client": "^1.10.1",
+    "framer-motion": "^11.11.0",
     "lucide-react": "^0.460.0",
-    "framer-motion": "^11.11.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
