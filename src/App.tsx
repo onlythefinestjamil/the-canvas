@@ -14,6 +14,10 @@ import { makeClip } from './lib/video/clip';
 import { addClip } from './lib/video/timeline';
 import { MODELS } from './lib/models';
 import { runBatch } from './lib/batch';
+import Products, { ProductId } from './components/Products';
+import OTFHomePage from './components/OTFHomePage';
+import EclipsePage from './components/EclipsePage';
+import ArtistLogin, { ArtistId } from './components/ArtistLogin';
 import { loadGallery, saveGallery, loadSettings, saveSettings } from './lib/storage';
 import { loadUser, saveUser, logOut, upgradePlan } from './lib/auth';
 import { creditsRemaining, canGenerate, resetUsage, usedThisMonth } from './lib/credits';
@@ -33,13 +37,14 @@ export default function App() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [videoProject, setVideoProject] = useState<VideoProject | null>(null);
   const [videoEditorOpen, setVideoEditorOpen] = useState(false);
+  const [view, setView] = useState<'launcher' | 'studio'>('launcher');
+  const [productId, setProductId] = useState<ProductId | null>(null);
 
   useEffect(() => {
     setItems(loadGallery());
     setSettings(loadSettings());
     const u = loadUser();
     setUser(u);
-    if (!u) setAuthOpen(true);
   }, []);
 
   useEffect(() => {
@@ -89,6 +94,21 @@ export default function App() {
     setAuthOpen(true);
   }, []);
 
+  const openProduct = useCallback((id: ProductId) => {
+    if (id === 'canvas') {
+      setView('studio');
+      setProductId(null);
+      return;
+    }
+    setProductId(id);
+    setView('launcher');
+  }, []);
+
+  const openLauncher = useCallback(() => {
+    setView('launcher');
+    setProductId(null);
+  }, []);
+
   const handleSelectPlan = useCallback(
     async (p: Plan) => {
       if (!user) {
@@ -125,6 +145,16 @@ export default function App() {
   const planLabel = planInfo(user?.plan || 'free');
   const creditsDisplay = creditsLeft === Infinity ? '∞' : creditsLeft;
 
+  if (view !== 'studio') {
+    if (productId === 'otf') return <OTFHomePage onBack={openLauncher} />;
+    if (productId === 'eclipse') return <EclipsePage onBack={openLauncher} />;
+    if (productId && String(productId).startsWith('login-')) {
+      const artist = String(productId).replace('login-', '') as ArtistId;
+      return <ArtistLogin artist={artist} onBack={openLauncher} />;
+    }
+    return <Products onOpen={openProduct} />;
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       {/* Header */}
@@ -139,6 +169,9 @@ export default function App() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
+          <button onClick={openLauncher} className="icon-btn" title="Back to Momentum Labs launcher" style={{ padding: '0.35rem 0.5rem' }}>
+            ←
+          </button>
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
