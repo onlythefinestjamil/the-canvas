@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Settings as SettingsIcon, Key, X, Eye, EyeOff } from 'lucide-react';
 import { MODELS } from '../lib/models';
 import { PLANS } from '../lib/billing';
+import { isElite } from './BrandMark';
+import waveIcon from '../../assets/brand/canvas-icon-wave.png';
+import ribbonHero from '../../assets/brand/canvas-hero-ribbon.png';
 import type { Settings, Plan } from '../types';
 
 interface Props {
@@ -93,7 +96,18 @@ export default function SettingsPanel({ settings, onSave, plan, onSelectPlan }: 
 
               <div style={{ height: 1, background: 'var(--border)', margin: '1rem 0' }} />
 
-              <h3 style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.6rem' }}>Plan</h3>
+              <h3 style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <img
+                  src={isElite(plan) ? ribbonHero : waveIcon}
+                  alt={isElite(plan) ? 'ELITE tier mark' : 'REGULAR tier mark'}
+                  style={{ width: 20, height: 20, borderRadius: 5 }}
+                />
+                Plan {isElite(plan) && (
+                  <span style={{ fontSize: '0.55rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#0b0f0e', background: 'linear-gradient(90deg, #b8c4c2, #8fe8d4)', borderRadius: 4, padding: '2px 6px' }}>
+                    Elite member
+                  </span>
+                )}
+              </h3>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 {PLANS.map((p) => (
                   <button

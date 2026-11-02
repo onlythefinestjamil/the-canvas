@@ -12,6 +12,7 @@ import { loadGallery, saveGallery, loadSettings, saveSettings } from './lib/stor
 import { loadUser, saveUser, logOut, upgradePlan } from './lib/auth';
 import { creditsRemaining, canGenerate, resetUsage, usedThisMonth } from './lib/credits';
 import { startCheckout, planInfo } from './lib/billing';
+import BrandMark from './components/BrandMark';
 import type { ModelDef, GenItem, Settings, GenSettings, AuthUser, Plan, HistoryEntry } from './types';
 
 export default function App() {
@@ -129,33 +130,7 @@ export default function App() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4 }}
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 8,
-              background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 800,
-              fontSize: 17,
-              color: '#fff',
-            }}
-          >
-            C
-          </motion.div>
-          <div>
-            <h1 className="brand-gradient" style={{ fontSize: '1.05rem', fontWeight: 800, letterSpacing: '-0.01em', lineHeight: 1 }}>
-              The Canvas
-            </h1>
-            <p style={{ fontSize: '0.6rem', color: 'var(--text-dim)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 2 }}>
-              AI Creative Studio
-            </p>
-          </div>
+          <BrandMark plan={user?.plan || 'free'} />
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
