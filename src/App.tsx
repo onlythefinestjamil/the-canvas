@@ -17,6 +17,7 @@ import { runBatch } from './lib/batch';
 import Products, { ProductId } from './components/Products';
 import OTFHomePage from './components/OTFHomePage';
 import EclipsePage from './components/EclipsePage';
+import ScriptStudio from './components/ScriptStudio';
 import ArtistLogin, { ArtistId } from './components/ArtistLogin';
 import { loadGallery, saveGallery, loadSettings, saveSettings } from './lib/storage';
 import { loadUser, saveUser, logOut, upgradePlan } from './lib/auth';
@@ -148,6 +149,7 @@ export default function App() {
   if (view !== 'studio') {
     if (productId === 'otf') return <OTFHomePage onBack={openLauncher} />;
     if (productId === 'eclipse') return <EclipsePage onBack={openLauncher} />;
+    if (productId === 'scriptstudio') return <ScriptStudio onBack={openLauncher} />;
     if (productId && String(productId).startsWith('login-')) {
       const artist = String(productId).replace('login-', '') as ArtistId;
       return <ArtistLogin artist={artist} onBack={openLauncher} />;

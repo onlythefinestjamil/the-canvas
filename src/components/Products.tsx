@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import {
   Wand2, ShoppingBag, Music2, Sparkles, Crown, Boxes, Cpu,
-  Swords, ChevronRight,
+  Swords, ChevronRight, Clapperboard,
 } from 'lucide-react';
 
 export type ProductId =
@@ -13,6 +13,7 @@ export type ProductId =
   | 'storeframe'
   | 'engine'
   | 'eclipse'
+  | 'scriptstudio'
   | 'login-juke'
   | 'login-otw407'
   | 'login-stacey'
@@ -57,6 +58,15 @@ export const PRODUCTS: Product[] = [
     accent: '#8b5cf6',
     status: 'Vertical slice in development',
     badge: 'Design Bible V4',
+  },
+  {
+    id: 'scriptstudio',
+    name: 'Script Studio',
+    tagline: 'AI script generation - commercials, music videos, social, screenplays, shot lists, treatments.',
+    category: 'Creative',
+    icon: <Clapperboard size={20} />,
+    accent: '#7c5cff',
+    badge: '6 modes',
   },
   {
     id: 'juke',
