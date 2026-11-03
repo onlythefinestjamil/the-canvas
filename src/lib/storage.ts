@@ -22,13 +22,33 @@ export function saveGallery(items: GenItem[]): void {
   }
 }
 
+// Keys baked at build time (.env VITE_*) — used as DEFAULTS so generation
+// works out of the box. Anything the user saves in Settings overrides these.
+const BUNDLED_KEYS: Record<string, string> = (
+  [
+    ['openai', import.meta.env.VITE_OPENAI_API_KEY],
+    ['stability', import.meta.env.VITE_STABILITY_API_KEY],
+    ['blackforest', import.meta.env.VITE_FAL_API_KEY],
+    ['google', import.meta.env.VITE_GOOGLE_API_KEY],
+    ['runway', import.meta.env.VITE_RUNWAY_API_KEY],
+    ['minimax', import.meta.env.VITE_MINIMAX_API_KEY],
+    ['cloudflare', import.meta.env.VITE_CLOUDFLARE_API_KEY],
+  ] as [string, string | undefined][]
+).reduce<Record<string, string>>((acc, [id, val]) => {
+  if (val && val.trim()) acc[id] = val.trim();
+  return acc;
+}, {});
+
 export function loadSettings(): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return { apiKeys: {}, theme: 'dark' };
-    return JSON.parse(raw) as Settings;
+    if (!raw) return { apiKeys: { ...BUNDLED_KEYS }, theme: 'dark' };
+    const stored = JSON.parse(raw) as Settings;
+    // seed any missing keys from the bundled defaults
+    const merged: Record<string, string> = { ...BUNDLED_KEYS, ...(stored.apiKeys || {}) };
+    return { ...stored, apiKeys: merged };
   } catch {
-    return { apiKeys: {}, theme: 'dark' };
+    return { apiKeys: { ...BUNDLED_KEYS }, theme: 'dark' };
   }
 }
 
