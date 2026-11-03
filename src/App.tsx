@@ -227,23 +227,27 @@ export default function App() {
             <button onClick={() => setAuthOpen(true)} className="btn">Sign in</button>
           )}
 
-          <button
-            onClick={() => { setEditorImage(null); setEditorOpen(true); }}
-            className="btn ghost"
-            title="Open the image editor on a blank canvas"
-          >
-            <Pencil size={14} /> New Canvas
-          </button>
+          <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0 }}>
+            <button
+              onClick={() => { setEditorImage(null); setEditorOpen(true); }}
+              className="btn ghost"
+              title="Open the image editor on a blank canvas"
+              style={{ flexShrink: 0 }}
+            >
+              <Pencil size={14} /> New Canvas
+            </button>
 
-          <button
-            onClick={() => { setVideoProject(null); setVideoEditorOpen(true); }}
-            className="btn"
-            title="Open the video editor on a new project"
-          >
-            <Clapperboard size={14} /> New Video
-          </button>
+            <button
+              onClick={() => { setVideoProject(null); setVideoEditorOpen(true); }}
+              className="btn"
+              title="Open the video editor on a new project"
+              style={{ flexShrink: 0 }}
+            >
+              <Clapperboard size={14} /> New Video
+            </button>
 
-          <SettingsPanel settings={settings} onSave={handleSaveSettings} plan={user?.plan || 'free'} onSelectPlan={handleSelectPlan} />
+            <SettingsPanel settings={settings} onSave={handleSaveSettings} plan={user?.plan || 'free'} onSelectPlan={handleSelectPlan} />
+          </div>
         </div>
       </header>
 
