@@ -22,13 +22,27 @@ export function saveGallery(items: GenItem[]): void {
   }
 }
 
+// Pre-populated API keys from .env (injected by Vite at build time)
+const ENV_KEYS: Record<string, string> = {
+  openai: (import.meta.env.VITE_OPENAI_API_KEY as string) || '',
+  runway: (import.meta.env.VITE_RUNWAY_API_KEY as string) || '',
+  stability: (import.meta.env.VITE_STABILITY_API_KEY as string) || '',
+  blackforest: (import.meta.env.VITE_FAL_KEY as string) || '',
+  minimax: (import.meta.env.VITE_MINIMAX_API_KEY as string) || '',
+};
+
 export function loadSettings(): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return { apiKeys: {}, theme: 'dark' };
-    return JSON.parse(raw) as Settings;
+    const saved = raw ? JSON.parse(raw) as Settings : { apiKeys: {}, theme: 'dark' as const };
+    // Merge: env keys as defaults, user-saved keys override
+    const merged: Settings = {
+      apiKeys: { ...ENV_KEYS, ...saved.apiKeys },
+      theme: saved.theme || 'dark',
+    };
+    return merged;
   } catch {
-    return { apiKeys: {}, theme: 'dark' };
+    return { apiKeys: { ...ENV_KEYS }, theme: 'dark' };
   }
 }
 
