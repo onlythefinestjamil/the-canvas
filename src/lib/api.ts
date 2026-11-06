@@ -156,7 +156,7 @@ async function callRunway(model: ModelDef, prompt: string, settings: GenSettings
     duration: settings.duration || 5,
     resolution: settings.resolution || '720p',
   };
-  const res = await fetch('https://api.runwayml.com/v1/generate', {
+  const res = await fetch('https://api.dev.runwayml.com/v1/generate', {
     method: 'POST',
     headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'X-Runway-API-Key': key },
     body: JSON.stringify(body),
