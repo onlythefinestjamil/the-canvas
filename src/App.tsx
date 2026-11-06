@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Film, ImageIcon, Layers, LogOut, User as UserIcon } from 'lucide-react';
+import { Sparkles, Film, ImageIcon, Layers, LogOut, User as UserIcon, Pencil } from 'lucide-react';
 import PromptInput from './components/PromptInput';
 import Gallery from './components/Gallery';
 import SettingsPanel from './components/Settings';
 import Auth from './components/Auth';
 import PromptHistory from './components/PromptHistory';
+import PhotoEditor from './components/PhotoEditor';
 import { MODELS } from './lib/models';
 import { runBatch } from './lib/batch';
 import { loadGallery, saveGallery, loadSettings, saveSettings } from './lib/storage';
@@ -24,6 +25,8 @@ export default function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [editorImage, setEditorImage] = useState<string | null>(null);
+  const [editorOpen, setEditorOpen] = useState(false);
 
   useEffect(() => {
     setItems(loadGallery());
@@ -157,6 +160,14 @@ export default function App() {
             <button onClick={() => setAuthOpen(true)} className="btn">Sign in</button>
           )}
 
+          <button
+            onClick={() => { setEditorImage(null); setEditorOpen(true); }}
+            className="btn ghost"
+            title="Open the image editor on a blank canvas"
+          >
+            <Pencil size={14} /> New Canvas
+          </button>
+
           <SettingsPanel settings={settings} onSave={handleSaveSettings} plan={user?.plan || 'free'} onSelectPlan={handleSelectPlan} />
         </div>
       </header>
@@ -216,7 +227,7 @@ export default function App() {
             <h2 style={{ fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)' }}>Gallery</h2>
             <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>· {items.length} items</span>
           </div>
-          <Gallery items={items} />
+          <Gallery items={items} onEdit={(item) => { setEditorImage(item.resultUrl ?? null); setEditorOpen(true); }} />
         </main>
       </div>
 
@@ -231,6 +242,12 @@ export default function App() {
 
       <Auth open={authOpen} onClose={() => setAuthOpen(false)} onAuth={handleAuth} />
       <PromptHistory open={historyOpen} onClose={() => setHistoryOpen(false)} onSelect={handleHistorySelect} />
+      {editorOpen && (
+        <PhotoEditor
+          initialImage={editorImage}
+          onClose={() => { setEditorOpen(false); setEditorImage(null); }}
+        />
+      )}
     </div>
   );
 }
